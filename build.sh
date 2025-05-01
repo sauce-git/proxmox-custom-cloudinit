@@ -15,7 +15,7 @@ ISO_PATH="/var/lib/vz/template/iso/$ISO_NAME"
 IDE_NAME="ide2"
 
 # Load .env file
-export $(grep -v '^#' .env | xargs)
+export $(grep -v '^#' .env | xargs -d '\n')
 
 # Inject env vars into a copy of the YAML (without modifying the original)
 envsubst < "$CI_YAML_TEMPLATE" > "$CI_YAML_TMP"
