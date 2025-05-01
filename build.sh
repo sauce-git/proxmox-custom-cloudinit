@@ -8,8 +8,9 @@ if [ -z "$1" ]; then
 fi
 
 VMID="$1"
-CI_YAML_TEMPLATE="cloud-init.yaml"
+CI_TEMPLATE="cloud-init.yaml"
 CI_YAML_TMP="cloud-init.generated.yaml"
+CI_NETWORK_TEMPLATE="ci-network.yaml"
 ISO_NAME="custom-ci.iso"
 ISO_PATH="/var/lib/vz/template/iso/$ISO_NAME"
 IDE_NAME="ide2"
@@ -20,11 +21,11 @@ while IFS='=' read -r key value; do
 done < <(grep -v '^#' .env)
 
 # Inject env vars into a copy of the YAML (without modifying the original)
-envsubst < "$CI_YAML_TEMPLATE" > "$CI_YAML_TMP"
+envsubst < "$CI_TEMPLATE" > "$CI_YAML_TMP"
 
 # Generate ISO from generated YAML
 echo "📦 Generating cloud-init ISO..."
-cloud-localds "$ISO_NAME" "$CI_YAML_TMP"
+cloud-localds --network-config "$CI_NETWORK_TEMPLATE" "$ISO_NAME" "$CI_YAML_TMP"
 
 # Clean up temporary YAML
 rm -f "$CI_YAML_TMP"
