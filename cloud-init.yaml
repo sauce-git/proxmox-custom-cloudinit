@@ -2,12 +2,12 @@
 users:
   - name: sauce
     ssh-authorized-keys:
-      # - your ssh key here
+      - ${SSH_PUBLIC_KEY}
     sudo: ALL=(ALL) NOPASSWD:ALL
     groups: sudo
     shell: /bin/bash
     lock_passwd: false
-    # passwd: "your encrypted password here"
+    passwd: ${PASSWORD_HASH}
 
 ssh_pwauth: true
 chpasswd:
