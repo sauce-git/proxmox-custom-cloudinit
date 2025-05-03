@@ -8,6 +8,7 @@ if [ -z "$1" ]; then
 fi
 
 VMID="$1"
+USE_NETWORK_CONFIG="${2:-false}"
 CI_TEMPLATE="cloud-init.yaml"
 CI_YAML_TMP="cloud-init.generated.yaml"
 CI_NETWORK_TEMPLATE="ci-network.yaml"
@@ -25,7 +26,13 @@ envsubst < "$CI_TEMPLATE" > "$CI_YAML_TMP"
 
 # Generate ISO from generated YAML
 echo "📦 Generating cloud-init ISO..."
-cloud-localds --network-config "$CI_NETWORK_TEMPLATE" "$ISO_NAME" "$CI_YAML_TMP"
+if [ "$USE_NETWORK_CONFIG" = "with-net" ]; then
+  echo "🛜 Including static network configuration..."
+  cloud-localds --network-config "$CI_NETWORK_TEMPLATE" "$ISO_NAME" "$CI_YAML_TMP"
+else
+  echo "🌐 Using Proxmox/DHCP network config (no static config injected)..."
+  cloud-localds "$ISO_NAME" "$CI_YAML_TMP"
+fi
 
 # Clean up temporary YAML
 rm -f "$CI_YAML_TMP"
